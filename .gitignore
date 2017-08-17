@@ -1,0 +1,19 @@
+### node etc ###
+
+# Dependency directorys
+# Deployed apps should consider commenting these lines out:
+# see https://npmjs.org/doc/faq.html#Should-I-check-my-node_modules-folder-into-git
+node_modules/
+bower_components/
+
+# Configs (api keys)
+config.js
+
+#process env
+.env
+
+# Webpack Bundle file should be untracked at least until full deployment
+bundle.js
+
+#aws config
+aws-config.json
