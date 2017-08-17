@@ -1,32 +1,39 @@
 var express = require('express');
+var bodyParser = require('body-parser');
 var AWS = require('aws-sdk');
 var app = express();
-
-//Pull credentials/regions from config
 AWS.config.loadFromPath('./aws-config.json');
+
+app.use(express.static(__dirname + '/client/dist'));
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: true }));
+
+// parse application/json
+app.use(bodyParser.json());
+
 
 var rek = new AWS.Rekognition();
 
-app.get('/', function (req, res) {
-    res.send('Welcome to your app! Try visiting "/detectExample" to see a Rekognition result.')
-});
+// app.get('/', function (req, res) {
+//   res.send('input a facebook id here.')
+// });
 
-app.get('/detectExample', function(req, res) {
+app.get('/dopple', function(req, res) {
     //Docs on Rekognition API
     // http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/Rekognition.html
+
+    console.log(req.body)
     var params =
         {
             Image: {
                 S3Object: {
                     Bucket: "lightsailhackathon", //Bucket of choice.
-                    Name: "10379167.jpeg"    //Image of choice.
+                    Name: "Jonathan Kim.jpg"    //Image of choice.
                 }
-            },
-            MaxLabels: 100,
-            MinConfidence: 10
+            }
         };
 
-    rek.detectLabels(params, function(err, data) {
+    rek.recognizeCelebrities(params, function(err, data) {
         if (err) {
             res.send(err.stack);
         } else {
@@ -35,5 +42,5 @@ app.get('/detectExample', function(req, res) {
     });
 });
 
-app.listen(3000);
-console.log('listening on 3000');
+app.listen(8080);
+console.log('listening on 8080');
