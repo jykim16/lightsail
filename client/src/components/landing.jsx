@@ -18,7 +18,7 @@ const Landing = (props) => {
         screenshotFormat="image/jpeg"
         width={350}
       />
-    <button onClick={()=>{props.capture(cam)}}>Capture photo</button>
+    <button onClick={ ()=>{props.capture(cam.getScreenshot()) }}>Capture photo</button>
     </span>
   );
 };

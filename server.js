@@ -18,28 +18,33 @@ var rek = new AWS.Rekognition();
 //   res.send('input a facebook id here.')
 // });
 
-app.get('/dopple', function(req, res) {
+app.post('/dopple', function(req, res) {
     //Docs on Rekognition API
     // http://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/Rekognition.html
+    var photo = [];
+    req.on('data', (chunk) => {
+      photo.push(chunk);
+    }).on('end', ()=> {
+      var photoBuff = Buffer.concat(photo).toString('base64');
+      var params =
+          {
+              Image: {
+                  S3Object: {
+                      Bucket: "lightsailhackathon", //Bucket of choice.
+                      Name: "Jonathan Kim.jpg"    //Image of choice.
+                  }
+              }
+          };
 
-    console.log(req.body)
-    var params =
-        {
-            Image: {
-                S3Object: {
-                    Bucket: "lightsailhackathon", //Bucket of choice.
-                    Name: "Jonathan Kim.jpg"    //Image of choice.
-                }
-            }
-        };
+      rek.recognizeCelebrities(params, function(err, data) {
+          if (err) {
+              res.send(err.stack);
+          } else {
+              res.send(data);
+          }
+      });
+    })
 
-    rek.recognizeCelebrities(params, function(err, data) {
-        if (err) {
-            res.send(err.stack);
-        } else {
-            res.send(data);
-        }
-    });
 });
 
 app.listen(8080);

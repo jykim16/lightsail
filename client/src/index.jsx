@@ -17,16 +17,34 @@ class App extends React.Component {
     };
     this.capture = this.capture.bind(this);
   }
+  getBinary(base64Image) {
+    var binaryImg = atob(base64Image);
+    var length = binaryImg.length;
+    var ab = new ArrayBuffer(length);
+    var ua = new Uint8Array(ab);
+    for (var i = 0; i < length; i++) {
+      ua[i] = binaryImg.charCodeAt(i);
+    }
+    return ab;
+  }
 
-  capture(cam) {
-    const imageSrc = JSON.stringify(cam.getScreenshot());
-    $.get('/dopple', {image: imageSrc}, (data) => {
-      this.setState({
-        celebName: data.CelebrityFaces[0].Name,
-        celebLink: data.CelebrityFaces[0].Urls[0],
-        confidence: data.CelebrityFaces[0].MatchConfidence
-      });
-      console.log(data)
+  capture(screenShot) {
+    var binary = this.getBinary(screenShot.slice(27))
+    console.log(binary)
+    $.ajax({
+      url: '/dopple',
+      data: binary,
+      processData: false,
+      contentType: "multipart/form-data",
+      type: "POST",
+      success: (data) => {
+        console.log(data)
+        this.setState({
+          celebName: data.CelebrityFaces[0].Name,
+          celebLink: data.CelebrityFaces[0].Urls[0],
+          confidence: data.CelebrityFaces[0].MatchConfidence
+        });
+      }
     });
   }
 
